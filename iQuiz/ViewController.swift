@@ -42,7 +42,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 //    ]
     var titles : [String] = []
     var subtitles : [String] = []
-    let icons = ["math-icon", "superhero-icon", "science-icon"]
+    let icons = ["science-icon", "superhero-icon", "math-icon"]
     
     var urlString: String = "http://tednewardsandbox.site44.com/questions.json"
     
