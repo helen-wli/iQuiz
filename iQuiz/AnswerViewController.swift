@@ -27,11 +27,15 @@ class AnswerViewController: UIViewController {
     // current number of correct answers by the user
     var currScore: Int! = nil
     
-    let keys = [
-        ["pi", "3.14", "German"], // math keys
-        ["Six", "Brooklyn", "Strawberries"], // marvel keys
-        ["Four", "13 octillion lbs"] // science keys
-    ]
+//    let keys = [
+//        ["pi", "3.14", "German"], // math keys
+//        ["Six", "Brooklyn", "Strawberries"], // marvel keys
+//        ["Four", "13 octillion lbs"] // science keys
+//    ]
+    var key: String! = nil
+    
+    var quizData: [Collection]? = nil
+    var urlString: String! = nil
     
     @IBOutlet weak var alarm: UILabel!
     @IBOutlet weak var question: UILabel!
@@ -50,11 +54,18 @@ class AnswerViewController: UIViewController {
             vc.topicSection = topicSection
             vc.questionNum = questionNum
             vc.currScore = currScore
+            vc.quizData = quizData
+            vc.urlString = urlString
         }
         
         if let vc = segue.destination as? FinishViewController {
             vc.userScore = currScore
             vc.numQs = totalQs
+            vc.urlString = urlString
+        }
+        
+        if let vc = segue.destination as? ViewController{
+            vc.urlString = urlString
         }
     }
 
@@ -62,14 +73,14 @@ class AnswerViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        if userChoice == keys[topicSection][questionNum] {
+        if userChoice == key {
             alarm.text = "Got right!"
             currScore += 1
         } else {
             alarm.text = "Got wrong :("
         }
         
-        Ans.text = "Key: \(keys[topicSection][questionNum])"
+        Ans.text = "Key: \(key!)"
         question.text = questionText
         
         questionNum += 1

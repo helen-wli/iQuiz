@@ -14,57 +14,61 @@ class AnswerCell: UITableViewCell {
 class QuestionViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     // nth section of the quiz topics: math = 0, marvel = 1, science = 2
-    public var topicSection: Int! = nil
+    var topicSection: Int! = nil
     
     // nth question of selected quiz topic
-    public var questionNum: Int! = nil
+    var questionNum: Int! = 0
     
-    public var selectedTopic: [String]! = nil
-    public var topicChoices: [String]! = nil
-    public var userChoice: String! = nil
-    public var currScore: Int! = nil
+    var selectedTopic: [String]! = []
+    var topicChoices: [String]! = []
+    var userChoice: String! = nil
+    var currScore: Int! = 0
+    
+    var quizData: [Collection]! = nil
+    var urlString: String! = nil
+    var key: String! = nil
 
     @IBOutlet weak var questionLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
     
-    let mathQuestions = [
-        "What is the ratio of a circle's circumference to its diameter",
-        "What is pi approximately?",
-        "Mathematician Carl Gauss is"
-    ]
-    let mathChoices = [
-        ["alpha", "beta", "pi", "theta"],
-        ["1.57", "3.14", "6.28", "7.85"],
-        ["American", "Asian", "German", "Indian"]
-    ]
-    
-    let marvelQuestions = [
-        "How many infinity stones are there?",
-        "Where is Captain America from?",
-        "Pepper Potts is allergic to what?"
-        
-    ]
-    let marvelChoices = [
-        ["Three", "Six", "Ten", "idk"],
-        ["Boston", "Brooklyn", "Chicago", "New York"],
-        ["Eggs", "Mangoes", "Shrimp", "Strawberries"]
-    ]
-    
-    let scienceQuestions = [
-        "How many oceans in the world?",
-        "How much does the earth weight?"
-    ]
-    let scienceChoices = [
-        ["One", "Two", "Four", "Eight"],
-        ["10 billion lbs", "1 trillion lbs", "10 septillion kg", "13 octillion lbs"]
-    ]
+//    let mathQuestions = [
+//        "What is the ratio of a circle's circumference to its diameter",
+//        "What is pi approximately?",
+//        "Mathematician Carl Gauss is"
+//    ]
+//    let mathChoices = [
+//        ["alpha", "beta", "pi", "theta"],
+//        ["1.57", "3.14", "6.28", "7.85"],
+//        ["American", "Asian", "German", "Indian"]
+//    ]
+//
+//    let marvelQuestions = [
+//        "How many infinity stones are there?",
+//        "Where is Captain America from?",
+//        "Pepper Potts is allergic to what?"
+//
+//    ]
+//    let marvelChoices = [
+//        ["Three", "Six", "Ten", "idk"],
+//        ["Boston", "Brooklyn", "Chicago", "New York"],
+//        ["Eggs", "Mangoes", "Shrimp", "Strawberries"]
+//    ]
+//
+//    let scienceQuestions = [
+//        "How many oceans in the world?",
+//        "How much does the earth weight?"
+//    ]
+//    let scienceChoices = [
+//        ["One", "Two", "Four", "Eight"],
+//        ["10 billion lbs", "1 trillion lbs", "10 septillion kg", "13 octillion lbs"]
+//    ]
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return topicChoices.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: AnswerCell = self.tableView.dequeueReusableCell(withIdentifier: "ansCellType") as! AnswerCell
+        let cell: AnswerCell = tableView.dequeueReusableCell(withIdentifier: "ansCellType") as! AnswerCell
         cell.mcContent.text = topicChoices[indexPath.row]
         return cell
     }
@@ -97,6 +101,15 @@ class QuestionViewController: UIViewController, UITableViewDelegate, UITableView
             
             vc.questionText = selectedTopic[questionNum]
             vc.totalQs = selectedTopic.count
+            
+            vc.quizData = quizData
+            vc.urlString = urlString
+            
+            vc.key = topicChoices[Int(key)! - 1]
+        }
+        
+        if let vc = segue.destination as? ViewController{
+            vc.urlString = urlString
         }
     }
     
@@ -107,25 +120,13 @@ class QuestionViewController: UIViewController, UITableViewDelegate, UITableView
         tableView.dataSource = self
         tableView.delegate = self
         
-        if questionNum == nil {
-            questionNum = 0
-        }
-        if currScore == nil {
-            currScore = 0
+        let collection = quizData[topicSection]
+        for question in collection.questions {
+            selectedTopic.append(question.text)
         }
         
-        switch topicSection {
-        case 1: // marvel super heroes
-            selectedTopic = marvelQuestions
-            topicChoices = marvelChoices[questionNum]
-        case 2: // science
-            selectedTopic = scienceQuestions
-            topicChoices = scienceChoices[questionNum]
-        default: // topicSection = 0 = math
-            selectedTopic = mathQuestions
-            topicChoices = mathChoices[questionNum]
-        }
-        
+        topicChoices = collection.questions[questionNum].answers
+        key = collection.questions[questionNum].answer
         questionLabel.text = selectedTopic[questionNum]
         
         let swipeLf: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipeLeft(_:)))

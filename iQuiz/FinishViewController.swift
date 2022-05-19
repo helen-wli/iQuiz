@@ -10,10 +10,12 @@ import UIKit
 class FinishViewController: UIViewController {
     
     // tracks the number of questions that the user got right
-    public var userScore: Int! = nil
+    var userScore: Int! = nil
     
     // total number of questions of corresponding quiz topic
-    public var numQs: Int! = nil
+    var numQs: Int! = nil
+    
+    var urlString: String! = nil
     
     // Perfect/Almost label
     @IBOutlet weak var feedbackLabel: UILabel!
@@ -23,6 +25,12 @@ class FinishViewController: UIViewController {
     
     @IBAction func goNext(_ sender: UIButton) {
         performSegue(withIdentifier: "toMain", sender: self) // go back to initial vc
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? ViewController{
+            vc.urlString = urlString
+        }
     }
 
     override func viewDidLoad() {
